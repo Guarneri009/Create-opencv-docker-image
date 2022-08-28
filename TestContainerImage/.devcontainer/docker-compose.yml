@@ -1,0 +1,32 @@
+version: "3"
+services:
+  vscode:
+    env_file: .env
+    image: "${DOCKER_IMAGE}"
+    #build:
+    #  context: .
+    #  dockerfile: Dockerfile
+    tty: true
+    environment:
+      # for windows
+      # - DISPLAY=<ip>
+      # for linx use xhost +local: command
+      - DISPLAY=${DISPLAY}
+      - XDG_RUNTIME_DIR=/tmp/runtime-root
+    #devices: 
+    #  # web camera
+    #  - /dev/video0:/dev/video0:mwr
+    volumes:
+      # for linx or use windows docker desktop
+      - ..:/workspace:cached
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      # for wsl2 docker windows
+      #- /mnt/<project dir>:/workspace:cached
+    deploy:
+      # for use gpu
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [ gpu ]
